@@ -1,12 +1,13 @@
 import { RootState } from "@/redux/store"
 import { createContext, useCallback, useContext } from "react"
 import { useSelector } from "react-redux"
-import { getFolderFilesService, addFolderService } from "@/services/workspace.service"
+import { getFolderFilesService, addFolderService, addFileService } from "@/services/workspace.service"
 
 
 type workspaceInterface = {
     getUserFolders: (folderID: string) => Promise<any>,
-    addFolder: (parentFolder: string, name: string) => Promise<boolean>
+    addFolder: (parentFolder: string, name: string) => Promise<boolean>,
+    addFile: (parentFolder: string, file: File) => Promise<boolean>
 }
 
 const workspaceContext = createContext<workspaceInterface>({} as workspaceInterface)
@@ -33,15 +34,19 @@ const WorkspaceProvider = ({ children }: any) => {
         }
     }, [owner]);
 
-    const addFile = useCallback(async () => {
+    const addFile = useCallback(async (parentFolder: string, file: File) => {
         try {
+            await addFileService(parentFolder, file, owner);
+            return true;
+        } catch (error) {
 
+            return false;
         }
     }, [owner])
 
 
     return (
-        <workspaceContext.Provider value={{ getUserFolders, addFolder }}>
+        <workspaceContext.Provider value={{ getUserFolders, addFolder, addFile }}>
             {children}
         </workspaceContext.Provider>
     )

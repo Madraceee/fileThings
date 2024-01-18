@@ -1,4 +1,5 @@
 import supabase from "@/configs/supabase.config";
+import { v4 as uuidv4 } from 'uuid';
 
 const getFolderFilesService = async (parentFolderID: string, owner: string) => {
     const { data, error } = await supabase
@@ -27,12 +28,13 @@ const addFolderService = async (parentFolderID: string, folderName: string, owne
 }
 
 const addFileService = async (parentFolderID: string, file: File, owner: string) => {
+    const id = uuidv4();
+    const extension = file.name.split(".").pop();
 
-    let id;
     const { data: _, error: error1 } = await supabase
         .storage
         .from("fileStorage")
-        .upload("", file);
+        .upload(`${id}.${extension}`, file);
 
     if (error1) {
         console.log(error1)
