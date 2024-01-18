@@ -146,7 +146,7 @@ const Display = ({ setFile }: { setFile: Dispatch<SetStateAction<FileType | null
                 ))}
             </div>
             <div className="w-full h-full flex flex-row justify-center items-center">
-                {loading && <Loader2 width={100} height={100} />}
+                {loading && <Loader2 width={100} height={100} className="animate-spin" />}
                 {loading === false && foldersArr.length === 0 && filesArr.length === 0 && <span className="text-4xl font-bold">Nothing Found :/</span>}
             </div>
             <Dialog open={renameDialogOpen} onOpenChange={(open) => setRenameDialogOpen(open)}>

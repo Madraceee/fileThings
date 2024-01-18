@@ -1,11 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 export type UserState = {
-    name: string,
     email: string,
     token: string,
     isLoggedIn: boolean,
-    folderID: string
+    folderID: string,
+    rootFolderID: string,
+    folderStack: string[],
+    folderNameStack: string[],
+    newFolderName: string;
 }
 
 export type ActionState = {
@@ -14,28 +17,47 @@ export type ActionState = {
 }
 
 const initialState: UserState = {
-    name: "",
     email: "",
     token: "",
     isLoggedIn: false,
-    folderID: ""
+    folderID: "",
+    rootFolderID: "",
+    folderStack: [],
+    folderNameStack: [""],
+    newFolderName: ""
 }
 
 
 const Login = (state: UserState, action: ActionState) => {
-    state.name = action.payload.name;
     state.email = action.payload.email;
     state.token = action.payload.token;
     state.folderID = action.payload.folderID;
+    state.rootFolderID = action.payload.folderID;
     state.isLoggedIn = true;
+    state.folderStack = [action.payload.folderID]
+    state.folderNameStack = ["/"];
 }
 
 const Logout = (state: UserState) => {
-    state.name = "";
     state.email = "";
     state.token = "";
     state.folderID = "";
     state.isLoggedIn = false;
+}
+
+const ChangeFolder = (state: UserState, action: ActionState) => {
+    state.folderID = action.payload.folderID;
+    state.folderStack.push(action.payload.folderID);
+    state.folderNameStack.push(action.payload.newFolderName);
+}
+
+const ChangeFolderBack = (state: UserState) => {
+    if (state.folderStack.length > 1) {
+        state.folderStack.pop();
+        state.folderID = state.folderStack.at(-1) || state.rootFolderID;
+        state.folderNameStack.pop();
+        state.newFolderName = ""
+    }
 }
 
 const userSlice = createSlice({
@@ -44,8 +66,10 @@ const userSlice = createSlice({
     reducers: {
         login: (state, action) => Login(state, action),
         logout: (state) => Logout(state),
+        changeFolder: (state, action) => ChangeFolder(state, action),
+        changeFolderBack: (state) => ChangeFolderBack(state)
     }
 })
 
 export default userSlice.reducer;
-export const { login, logout } = userSlice.actions;
+export const { login, logout, changeFolder, changeFolderBack } = userSlice.actions;

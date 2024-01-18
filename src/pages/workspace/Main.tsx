@@ -13,12 +13,11 @@ export type FileType = {
 
 export default function Main() {
 
-    const name = useSelector((state: RootState) => state.user.name);
     const [file, setFile] = useState<FileType | null>(null);
 
     return (
         <WorkspaceProvider>
-            <div>{name}'s Storage</div>
+            <div>Storage</div>
             <div className="flex flex-col lg:flex-row w-full gap-5">
                 <Display setFile={setFile} />
                 {file !== null && <Viewer file={file} closeFile={() => setFile(null)} />}
