@@ -16,6 +16,23 @@ const getFolderFilesService = async (parentFolderID: string, owner: string) => {
     return data;
 }
 
+const getFileService = async (fileID: string, fileName: string) => {
+    const extension = fileName.split(".").pop();
+
+    const { data, error } = await supabase
+        .storage
+        .from("fileStorage")
+        .download(`${fileID}.${extension}`);
+
+    if (error) {
+        console.log(error);
+        throw new Error(`Cannot create a new Folder - ${error}`);
+    }
+
+    return data;
+
+}
+
 const addFolderService = async (parentFolderID: string, folderName: string, owner: string) => {
     const { error } = await supabase
         .from("folder_file")
@@ -31,7 +48,7 @@ const addFileService = async (parentFolderID: string, file: File, owner: string)
     const id = uuidv4();
     const extension = file.name.split(".").pop();
 
-    const { data: _, error: error1 } = await supabase
+    const { error: error1 } = await supabase
         .storage
         .from("fileStorage")
         .upload(`${id}.${extension}`, file);
@@ -78,19 +95,29 @@ const deleteFolderService = async (folderID: string, owner: string) => {
     }
 }
 
-const deleteFileService = async (fileID: string, owner: string) => {
+const deleteFileService = async (fileName: string, fileID: string, owner: string) => {
     // Delete File from storage
+    const extension = fileName.split(".").pop();
+    const { error: error1 } = await supabase
+        .storage
+        .from("fileStorage")
+        .remove([`${fileID}.${extension}`]);
+
+    if (error1) {
+        console.log(error1);
+        throw new Error(`Cannot delete File - ${error1}`);
+    }
 
     // Delete File record
-    const { error } = await supabase
+    const { error: error2 } = await supabase
         .from("folder_file")
         .delete()
         .eq("Owner", owner)
         .eq("ID", fileID)
 
-    if (error) {
-        console.log(error);
-        throw new Error(`Cannot delete File - ${error}`);
+    if (error2) {
+        console.log(error2);
+        throw new Error(`Cannot delete File - ${error2}`);
     }
 }
 
@@ -127,5 +154,6 @@ export {
     deleteFileService,
     renameFileOrFolderService,
     MoveFileFolderService,
-    addFileService
+    addFileService,
+    getFileService
 }

@@ -9,7 +9,7 @@ import { Loader2 } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
 
 
-const Menu = () => {
+const Menu = ({ setRefresh }: { setRefresh: () => void }) => {
 
     const folderID = useSelector((state: RootState) => state.user.folderID);
     const { addFolder, addFile } = useWorkspace();
@@ -35,6 +35,7 @@ const Menu = () => {
         }
         setFolderName("")
         setFolderCreationLoading(false);
+        setRefresh();
     }
 
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -61,6 +62,7 @@ const Menu = () => {
         }
         setFile(null)
         setFileUploadLoading(false);
+        setRefresh();
     }
 
     return (
