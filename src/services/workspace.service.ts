@@ -68,8 +68,6 @@ const addFileService = async (parentFolderID: string, file: File, owner: string)
 }
 
 const deleteFolderService = async (folderID: string, owner: string) => {
-    // Delete Files from storage
-
     // Delete File Records and Folder Records
     const { error: error1 } = await supabase
         .from("folder_file")

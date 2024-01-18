@@ -9,6 +9,10 @@ import { changeFolder } from "@/redux/user/userSlice";
 import { useToast } from "./ui/use-toast";
 import { FileType } from "@/pages/workspace/Main";
 import { Loader2 } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "./ui/dialog";
+import { Input } from "./ui/input";
+import { Button } from "./ui/button";
+import { DialogTrigger } from "@radix-ui/react-dialog";
 
 type icon = {
     Name: string,
@@ -18,7 +22,7 @@ type icon = {
 
 const Display = ({ setFile }: { setFile: Dispatch<SetStateAction<FileType | null>> }) => {
     const folderID = useSelector((state: RootState) => state.user.folderID);
-    const { getUserFolders, deleteFile, getUserFile } = useWorkspace();
+    const { getUserFolders, deleteFile, getUserFile, renameFileOrFolder, deleteFolder } = useWorkspace();
     const dispatch = useDispatch();
     const { toast } = useToast();
 
@@ -26,6 +30,9 @@ const Display = ({ setFile }: { setFile: Dispatch<SetStateAction<FileType | null
     const [filesArr, setFilesArr] = useState<icon[]>([]);
     const [refresh, setRefresh] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
+    const [renameDialogOpen, setRenameDialogOpen] = useState<boolean>(false);
+    const [renameFileID, setRenameFileID] = useState<string>("");
+    const [newFileName, setNewFileName] = useState<string>("")
 
 
     useEffect(() => {
@@ -73,7 +80,46 @@ const Display = ({ setFile }: { setFile: Dispatch<SetStateAction<FileType | null
                 title: "Unable to delete File",
             })
         }
+    }
 
+    const deleteSelectedFolder = async (id: string) => {
+        const result = await deleteFolder(id);
+        if (result === true) {
+            toast({
+                title: "Folder Deleted",
+            })
+            setRefresh(!refresh)
+        } else {
+            toast({
+                variant: "destructive",
+                title: "Unable to delete Folder",
+            })
+        }
+    }
+
+    const openRenameDialogBox = (id: string) => {
+        setRenameFileID(id);
+        setRenameDialogOpen(true);
+    }
+
+    const rename = async () => {
+        if (renameFileID === "") {
+            return;
+        }
+        const result = await renameFileOrFolder(renameFileID, newFileName);
+        if (result === true) {
+            toast({
+                title: "Rename Successfull",
+            })
+            setRefresh(!refresh)
+        } else {
+            toast({
+                variant: "destructive",
+                title: "Rename unsuccessfull",
+            })
+        }
+        setRenameFileID("");
+        setRenameDialogOpen(false);
     }
 
     return (
@@ -85,6 +131,8 @@ const Display = ({ setFile }: { setFile: Dispatch<SetStateAction<FileType | null
                         key={index}
                         name={folder.Name}
                         onClick={() => updateFolderID(folder.ID, folder.Name)}
+                        rename={() => openRenameDialogBox(folder.ID)}
+                        deleteSelectedFolder={() => deleteSelectedFolder(folder.ID)}
                     />
                 ))}
                 {filesArr.map((file, index) => (
@@ -92,6 +140,7 @@ const Display = ({ setFile }: { setFile: Dispatch<SetStateAction<FileType | null
                         key={index}
                         name={file.Name}
                         onClick={() => displayFile(file.ID, file.Name)}
+                        rename={() => openRenameDialogBox(file.ID)}
                         deleteSelectedFile={() => deleteSelectedFile(file.Name, file.ID)}
                     />
                 ))}
@@ -100,7 +149,19 @@ const Display = ({ setFile }: { setFile: Dispatch<SetStateAction<FileType | null
                 {loading && <Loader2 width={100} height={100} />}
                 {loading === false && foldersArr.length === 0 && filesArr.length === 0 && <span className="text-4xl font-bold">Nothing Found :/</span>}
             </div>
-
+            <Dialog open={renameDialogOpen} onOpenChange={(open) => setRenameDialogOpen(open)}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Rename Folder</DialogTitle>
+                    </DialogHeader>
+                    <DialogDescription>
+                        <Input type="text" placeholder="Enter Folder name" value={newFileName} onChange={(e) => setNewFileName(e.target.value)} />
+                        <DialogTrigger>
+                            <Button className="mt-2" onClick={rename}>Rename</Button>
+                        </DialogTrigger>
+                    </DialogDescription>
+                </DialogContent>
+            </Dialog>
         </div>
     )
 }

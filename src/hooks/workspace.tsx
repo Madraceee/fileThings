@@ -1,7 +1,7 @@
 import { RootState } from "@/redux/store"
 import { createContext, useCallback, useContext } from "react"
 import { useSelector } from "react-redux"
-import { getFolderFilesService, addFolderService, addFileService, deleteFileService, getFileService } from "@/services/workspace.service"
+import { getFolderFilesService, addFolderService, addFileService, deleteFileService, getFileService, renameFileOrFolderService, deleteFolderService } from "@/services/workspace.service"
 
 
 type workspaceInterface = {
@@ -9,7 +9,9 @@ type workspaceInterface = {
     addFolder: (parentFolder: string, name: string) => Promise<boolean>,
     addFile: (parentFolder: string, file: File) => Promise<boolean>,
     deleteFile: (name: string, ID: string) => Promise<boolean>,
-    getUserFile: (fileID: string, name: string) => Promise<Blob | null>
+    getUserFile: (fileID: string, name: string) => Promise<Blob | null>,
+    renameFileOrFolder: (fileID: string, newName: string) => Promise<boolean>,
+    deleteFolder: (fileID: string) => Promise<boolean>
 }
 
 const workspaceContext = createContext<workspaceInterface>({} as workspaceInterface)
@@ -66,9 +68,26 @@ const WorkspaceProvider = ({ children }: any) => {
         }
     }, [owner]);
 
+    const deleteFolder = useCallback(async (fileID: string) => {
+        try {
+            await deleteFolderService(fileID, owner);
+            return true;
+        } catch (error) {
+            return false;
+        }
+    }, [owner])
+
+    const renameFileOrFolder = useCallback(async (fileID: string, newName: string) => {
+        try {
+            await renameFileOrFolderService(fileID, newName, owner);
+            return true;
+        } catch (error) {
+            return false;
+        }
+    }, [owner])
 
     return (
-        <workspaceContext.Provider value={{ getUserFolders, addFolder, addFile, deleteFile, getUserFile }}>
+        <workspaceContext.Provider value={{ getUserFolders, addFolder, addFile, deleteFile, getUserFile, renameFileOrFolder, deleteFolder }}>
             {children}
         </workspaceContext.Provider>
     )
