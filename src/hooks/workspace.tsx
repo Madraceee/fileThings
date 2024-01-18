@@ -55,7 +55,7 @@ const WorkspaceProvider = ({ children }: any) => {
 
             return false;
         }
-    }, [owner])
+    }, [owner]);
 
     const deleteFile = useCallback(async (fileName: string, fileID: string) => {
         try {
@@ -64,7 +64,7 @@ const WorkspaceProvider = ({ children }: any) => {
         } catch (error) {
             return false;
         }
-    }, [owner])
+    }, [owner]);
 
 
     return (

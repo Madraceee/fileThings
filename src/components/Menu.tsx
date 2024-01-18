@@ -1,24 +1,27 @@
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { Button } from "./ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
 import { Input } from "./ui/input"
 import { RootState } from "@/redux/store"
 import { useWorkspace } from "@/hooks/workspace"
-import { ChangeEvent, useState } from "react"
+import { ChangeEvent, useEffect, useState } from "react"
 import { Loader2 } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
+import { changeFolderBack } from "@/redux/user/userSlice"
 
 
 const Menu = ({ setRefresh }: { setRefresh: () => void }) => {
-
     const folderID = useSelector((state: RootState) => state.user.folderID);
+    const folderNameStack = useSelector((state: RootState) => state.user.folderNameStack)
     const { addFolder, addFile } = useWorkspace();
-    const { toast } = useToast()
+    const { toast } = useToast();
+    const dispatch = useDispatch();
 
     const [folderName, setFolderName] = useState<string>("");
-    const [file, setFile] = useState<File | null>(null)
+    const [file, setFile] = useState<File | null>(null);
     const [folderCreationLoading, setFolderCreationLoading] = useState<boolean>(false);
     const [fileUploadLoading, setFileUploadLoading] = useState<boolean>(false);
+    const [path, setPath] = useState<string>("")
 
     const addFolderToWorkspace = async () => {
         setFolderCreationLoading(true);
@@ -65,10 +68,21 @@ const Menu = ({ setRefresh }: { setRefresh: () => void }) => {
         setRefresh();
     }
 
+    useEffect(() => {
+        setPath(folderNameStack.join("/"))
+        if (folderNameStack.length === 1) {
+            setPath("/")
+        }
+    }, [folderID])
+
     return (
-        <div className="flex flex-row justify-between px-10 py-5">
-            <span className="font-bold text-2xl">Path: { }</span>
-            <div className="flex flex-row gap-5">
+        <div className="flex flex-col md:flex-row justify-between px-10 py-5 gap-1">
+            <div className="flex gap-2 flex-row-reverse justify-between md:flex-row">
+                <Button onClick={() => dispatch(changeFolderBack())}>Back</Button>
+                <span className="font-bold text-sm md:text-2xl">Path: {path}</span>
+            </div>
+
+            <div className="flex flex-row gap-5 justify-between">
                 <Dialog>
                     <DialogTrigger asChild>
                         <Button disabled={folderCreationLoading}>

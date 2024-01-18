@@ -8,6 +8,7 @@ import Files from "./Files";
 import { changeFolder } from "@/redux/user/userSlice";
 import { useToast } from "./ui/use-toast";
 import { FileType } from "@/pages/workspace/Main";
+import { Loader2 } from "lucide-react";
 
 type icon = {
     Name: string,
@@ -24,10 +25,12 @@ const Display = ({ setFile }: { setFile: Dispatch<SetStateAction<FileType | null
     const [foldersArr, setFoldersArr] = useState<icon[]>([]);
     const [filesArr, setFilesArr] = useState<icon[]>([]);
     const [refresh, setRefresh] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
 
 
     useEffect(() => {
         const getFilesFolders = async () => {
+            setLoading(true)
             setFoldersArr([]);
             setFilesArr([])
             const { folders, files } = await getUserFolders(folderID);
@@ -37,15 +40,15 @@ const Display = ({ setFile }: { setFile: Dispatch<SetStateAction<FileType | null
             if (files.length) {
                 setFilesArr(files);
             }
+            setLoading(false);
         }
 
         getFilesFolders();
 
     }, [folderID, refresh]);
 
-    const updateFolderID = (id: string) => {
-        console.log(id)
-        dispatch(changeFolder({ folderID: id }));
+    const updateFolderID = (id: string, name: string) => {
+        dispatch(changeFolder({ folderID: id, newFolderName: name }));
     }
 
     const displayFile = async (fileID: string, fileName: string) => {
@@ -81,7 +84,7 @@ const Display = ({ setFile }: { setFile: Dispatch<SetStateAction<FileType | null
                     <Folder
                         key={index}
                         name={folder.Name}
-                        onClick={() => updateFolderID(folder.ID)}
+                        onClick={() => updateFolderID(folder.ID, folder.Name)}
                     />
                 ))}
                 {filesArr.map((file, index) => (
@@ -93,6 +96,11 @@ const Display = ({ setFile }: { setFile: Dispatch<SetStateAction<FileType | null
                     />
                 ))}
             </div>
+            <div className="w-full h-full flex flex-row justify-center items-center">
+                {loading && <Loader2 width={100} height={100} />}
+                {loading === false && foldersArr.length === 0 && filesArr.length === 0 && <span className="text-4xl font-bold">Nothing Found :/</span>}
+            </div>
+
         </div>
     )
 }
