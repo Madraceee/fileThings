@@ -22,6 +22,7 @@ export function Viewer({ file, closeFile }: props) {
         <div className="w-full min-h-[75vh]">
             <div className="flex flex-row justify-between my-2">
                 <span className="text-2xl">Viewer</span>
+                <Button onClick={handleDownload}>Download</Button>
                 <Button onClick={closeFile}><X /></Button>
             </div>
             {fileType === 'application/pdf' ? (
@@ -35,7 +36,6 @@ export function Viewer({ file, closeFile }: props) {
             ) : (
                 <div className="flex flex-col h-full items-center justify-center gap-5">
                     <span className="text-4xl font-bold">Not Supported</span>
-                    <Button onClick={handleDownload}>Download</Button>
                 </div>
             )}
         </div>

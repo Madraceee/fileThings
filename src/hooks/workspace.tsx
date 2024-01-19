@@ -1,7 +1,8 @@
 import { RootState } from "@/redux/store"
-import { createContext, useCallback, useContext } from "react"
+import { createContext, useCallback, useContext, useEffect } from "react"
 import { useSelector } from "react-redux"
 import { getFolderFilesService, addFolderService, addFileService, deleteFileService, getFileService, renameFileOrFolderService, deleteFolderService, getAllFoldersService, MoveFileFolderService } from "@/services/workspace.service"
+import { useNavigate } from "react-router-dom"
 
 
 type workspaceInterface = {
@@ -20,7 +21,10 @@ const workspaceContext = createContext<workspaceInterface>({} as workspaceInterf
 
 const WorkspaceProvider = ({ children }: any) => {
     const owner = useSelector((state: RootState) => state.user.email);
-    const rootFolderID = useSelector((state: RootState) => state.user.rootFolderID)
+    const rootFolderID = useSelector((state: RootState) => state.user.rootFolderID);
+    const isLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
+
+    const navigate = useNavigate();
 
     const getUserFolders = useCallback(async (folderID: string) => {
         try {
@@ -107,6 +111,12 @@ const WorkspaceProvider = ({ children }: any) => {
             return false;
         }
     }, [owner])
+
+    useEffect(() => {
+        if (isLoggedIn === false) {
+            navigate("/")
+        }
+    }, [])
 
     return (
         <workspaceContext.Provider value={{ getUserFolders, addFolder, addFile, deleteFile, getUserFile, renameFileOrFolder, deleteFolder, getAllFolders, moveFile }}>

@@ -50,7 +50,7 @@ export function CreateUser() {
             const data = await CreateAcc(email, password);
             console.log(data)
             toast({
-                description: "Check your email"
+                description: "Account Created"
             })
             setEmail("")
             setError("Proceed to Login")
