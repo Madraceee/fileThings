@@ -35,7 +35,7 @@ const Login = (state: UserState, action: ActionState) => {
     state.rootFolderID = action.payload.folderID;
     state.isLoggedIn = true;
     state.folderStack = [action.payload.folderID]
-    state.folderNameStack = ["/"];
+    state.folderNameStack = [""];
 }
 
 const Logout = (state: UserState) => {
@@ -43,6 +43,9 @@ const Logout = (state: UserState) => {
     state.token = "";
     state.folderID = "";
     state.isLoggedIn = false;
+    state.folderStack = [];
+    state.rootFolderID = ""
+    state.folderNameStack = [];
 }
 
 const ChangeFolder = (state: UserState, action: ActionState) => {

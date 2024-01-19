@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import { LoginService } from "@/services/workspace.service";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { login } from "@/redux/user/userSlice";
+import { useNavigate } from "react-router-dom";
+import { RootState } from "@/redux/store";
 
 export function Login() {
     const [error, setError] = useState<string>("");
@@ -13,6 +15,8 @@ export function Login() {
     const [password, setPassword] = useState<string>("");
 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const isLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn)
 
     const submitCreds = async () => {
         const emailPattern = /^[A-Z0-9._]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
@@ -46,7 +50,14 @@ export function Login() {
 
         setPassword("")
         setIsLoading(false);
+        navigate("/workspace")
     }
+
+    useEffect(() => {
+        if (isLoggedIn === true) {
+            navigate("/workspace")
+        }
+    }, []);
 
     return (
         <div className="w-1/2 flex flex-col gap-3">
@@ -60,7 +71,7 @@ export function Login() {
                 </Button>
                 {error !== "" && <span className="text-xs text-red-700">{error}</span>}
             </div>
-            <Button variant={"link"} className="justify-start">Create Acc</Button>
+            <Button variant={"link"} className="justify-start" onClick={() => navigate("/createUser")}>Create Acc</Button>
         </div>
 
     );

@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import { CreateAcc } from "@/services/workspace.service";
 import { useToast } from "@/components/ui/use-toast";
-import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 
 export function CreateUser() {
@@ -15,7 +17,8 @@ export function CreateUser() {
     const [confirmpassword, setConfirmPassword] = useState<string>("");
 
     const { toast } = useToast();
-    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const isLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn)
 
     const submitCreds = async () => {
         const emailPattern = /^[A-Z0-9._]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
@@ -60,6 +63,13 @@ export function CreateUser() {
         setConfirmPassword("")
         setIsLoading(false)
     }
+
+    useEffect(() => {
+        if (isLoggedIn === true) {
+            navigate("/workspace")
+        }
+    }, []);
+
     return (
         <div className="w-1/2 flex flex-col gap-3">
             <span className="text-2xl font-bold text-left">Login</span>
@@ -73,7 +83,7 @@ export function CreateUser() {
                 </Button>
                 {error !== "" && <span className="text-xs text-red-700">{error}</span>}
             </div>
-            <Button variant={"link"} className="justify-start">Login</Button>
+            <Button variant={"link"} className="justify-start" onClick={() => navigate("/login")}>Login</Button>
         </div>
 
     );

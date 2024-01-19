@@ -145,6 +145,68 @@ const MoveFileFolderService = async (ID: string, newParent: string, owner: strin
     }
 }
 
+const LoginService = async (email: string, password: string) => {
+    const { data: data1, error: error1 } = await supabase
+        .auth
+        .signInWithPassword({
+            email: email,
+            password: password
+        });
+
+    if (error1) {
+        console.log(error1);
+        throw new Error(`Cannot login - ${error1}`);
+    }
+
+    let { data: data2, error: error2 } = await supabase
+        .from('users')
+        .select('parent_folder_id')
+        .eq("email", email)
+
+    if (error2) {
+        console.log(error2);
+        throw new Error(`Cannot login - ${error2}`);
+    }
+
+    let folderID;
+    if (data2) {
+        folderID = data2[0].parent_folder_id;
+    }
+
+    return { ...data1, folderID }
+}
+
+const CreateAcc = async (email: string, password: string) => {
+    const { data: data1, error: error1 } = await supabase
+        .auth
+        .signUp({
+            email: email,
+            password: password
+        });
+
+    if (error1) {
+        console.log(error1);
+        throw new Error(`Cannot login - ${error1}`);
+    }
+
+    let { data: data2, error: error2 } = await supabase
+        .from('users')
+        .insert([{ email: email }])
+        .select()
+
+    if (error2) {
+        console.log(error2);
+        throw new Error(`Cannot login - ${error2}`);
+    }
+
+    let folderID;
+    if (data2) {
+        folderID = data2[0].parent_folder_id;
+    }
+
+    return { ...data1, folderID }
+}
+
 export {
     getFolderFilesService,
     addFolderService,
@@ -153,5 +215,7 @@ export {
     renameFileOrFolderService,
     MoveFileFolderService,
     addFileService,
-    getFileService
+    getFileService,
+    LoginService,
+    CreateAcc
 }

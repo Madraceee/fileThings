@@ -1,28 +1,30 @@
 import Display from "@/components/Display";
 import { Viewer } from "@/components/Viewer";
+import { Button } from "@/components/ui/button";
 import WorkspaceProvider from "@/hooks/workspace";
-import { RootState } from "@/redux/store"
+import { logout } from "@/redux/user/userSlice";
 import { useState } from "react";
-import { useSelector } from "react-redux"
-
+import { useDispatch } from "react-redux";
 
 export type FileType = {
     file: Blob,
     name: string
 }
 
-export default function Main() {
-
+export default function Workspace() {
+    const dispatch = useDispatch()
     const [file, setFile] = useState<FileType | null>(null);
 
     return (
         <WorkspaceProvider>
-            <div>Storage</div>
+            <div className="w-full flex flex-row justify-between">
+                <span className="w-full text-left text-2xl my-2 font-bold">Storage</span>
+                <Button onClick={() => dispatch(logout())}>Logout</Button>
+            </div>
             <div className="flex flex-col lg:flex-row w-full gap-5">
                 <Display setFile={setFile} />
                 {file !== null && <Viewer file={file} closeFile={() => setFile(null)} />}
             </div>
-
         </WorkspaceProvider>
     )
 }
