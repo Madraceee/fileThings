@@ -36,9 +36,9 @@ export function Login() {
         try {
             const data = await LoginService(email, password);
             dispatch(login({ email: email, token: data.session.access_token, folderID: data.folderID }));
-            setEmail("")
+            setEmail("");
+            navigate("/workspace")
         } catch (error: any) {
-            console.log(error);
             setError("Failed to login")
             if (error.message.match("Email not confirmed")) {
                 setError("Email not confirmed. Visit your mail")
@@ -50,7 +50,6 @@ export function Login() {
 
         setPassword("")
         setIsLoading(false);
-        navigate("/workspace")
     }
 
     useEffect(() => {

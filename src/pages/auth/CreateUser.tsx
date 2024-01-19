@@ -53,7 +53,7 @@ export function CreateUser() {
                 description: "Check email for verification"
             })
             setEmail("")
-            setError("Proceed to Login")
+            setError("Check email for verification")
         } catch (error) {
             console.log(error);
             setError("Failed to create Account");
