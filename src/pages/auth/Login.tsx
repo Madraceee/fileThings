@@ -71,7 +71,10 @@ export function Login() {
                 </Button>
                 {error !== "" && <span className="text-xs text-red-700">{error}</span>}
             </div>
-            <Button variant={"link"} className="justify-start" onClick={() => navigate("/createUser")}>Create Acc</Button>
+            <div className="w-full flex flex-row justify-between">
+                <Button variant={"link"} onClick={() => navigate("/createUser")}>Create Acc</Button>
+                <Button variant={"link"} onClick={() => navigate("/")}>Home</Button>
+            </div>
         </div>
 
     );

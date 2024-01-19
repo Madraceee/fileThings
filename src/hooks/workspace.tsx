@@ -1,7 +1,7 @@
 import { RootState } from "@/redux/store"
 import { createContext, useCallback, useContext } from "react"
 import { useSelector } from "react-redux"
-import { getFolderFilesService, addFolderService, addFileService, deleteFileService, getFileService, renameFileOrFolderService, deleteFolderService } from "@/services/workspace.service"
+import { getFolderFilesService, addFolderService, addFileService, deleteFileService, getFileService, renameFileOrFolderService, deleteFolderService, getAllFoldersService, MoveFileFolderService } from "@/services/workspace.service"
 
 
 type workspaceInterface = {
@@ -11,13 +11,16 @@ type workspaceInterface = {
     deleteFile: (name: string, ID: string) => Promise<boolean>,
     getUserFile: (fileID: string, name: string) => Promise<Blob | null>,
     renameFileOrFolder: (fileID: string, newName: string) => Promise<boolean>,
-    deleteFolder: (fileID: string) => Promise<boolean>
+    deleteFolder: (fileID: string) => Promise<boolean>,
+    getAllFolders: () => Promise<any>,
+    moveFile: (fileID: string, parentID: string) => Promise<boolean>
 }
 
 const workspaceContext = createContext<workspaceInterface>({} as workspaceInterface)
 
 const WorkspaceProvider = ({ children }: any) => {
     const owner = useSelector((state: RootState) => state.user.email);
+    const rootFolderID = useSelector((state: RootState) => state.user.rootFolderID)
 
     const getUserFolders = useCallback(async (folderID: string) => {
         try {
@@ -75,7 +78,7 @@ const WorkspaceProvider = ({ children }: any) => {
         } catch (error) {
             return false;
         }
-    }, [owner])
+    }, [owner]);
 
     const renameFileOrFolder = useCallback(async (fileID: string, newName: string) => {
         try {
@@ -84,10 +87,29 @@ const WorkspaceProvider = ({ children }: any) => {
         } catch (error) {
             return false;
         }
+    }, [owner]);
+
+    const getAllFolders = useCallback(async () => {
+        try {
+            const data = await getAllFoldersService(owner);
+            data.push({ ID: rootFolderID, Name: "/" })
+            return data;
+        } catch (error) {
+            return []
+        }
+    }, [owner]);
+
+    const moveFile = useCallback(async (fileID: string, parentID: string) => {
+        try {
+            await MoveFileFolderService(fileID, parentID, owner);
+            return true
+        } catch (error) {
+            return false;
+        }
     }, [owner])
 
     return (
-        <workspaceContext.Provider value={{ getUserFolders, addFolder, addFile, deleteFile, getUserFile, renameFileOrFolder, deleteFolder }}>
+        <workspaceContext.Provider value={{ getUserFolders, addFolder, addFile, deleteFile, getUserFile, renameFileOrFolder, deleteFolder, getAllFolders, moveFile }}>
             {children}
         </workspaceContext.Provider>
     )

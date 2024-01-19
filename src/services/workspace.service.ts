@@ -5,12 +5,27 @@ const getFolderFilesService = async (parentFolderID: string, owner: string) => {
     const { data, error } = await supabase
         .from("folder_file")
         .select(`ID,Name,Type`)
-        .eq("Parent", parentFolderID)
-        .eq("Owner", owner);
+        .eq("Owner", owner)
+        .eq("Parent", parentFolderID);
 
     if (error) {
         console.log(error)
         throw new Error(`Cannot fetch Folders and Files - ${error}`)
+    }
+
+    return data;
+}
+
+const getAllFoldersService = async (owner: string) => {
+    const { data, error } = await supabase
+        .from("folder_file")
+        .select("ID,Name")
+        .eq("Owner", owner)
+        .eq("Type", "Folder");
+
+    if (error) {
+        console.log(error)
+        throw new Error(`Cannot fetch All Folders - ${error}`)
     }
 
     return data;
@@ -217,5 +232,6 @@ export {
     addFileService,
     getFileService,
     LoginService,
-    CreateAcc
+    CreateAcc,
+    getAllFoldersService
 }

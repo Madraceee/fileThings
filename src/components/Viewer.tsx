@@ -31,7 +31,7 @@ export function Viewer({ file, closeFile }: props) {
                     title="PDF Document"
                 />
             ) : fileType.startsWith('image/') ? (
-                <img src={fileURL} alt="Image" className="aspect-auto" />
+                <img src={fileURL} alt="Image" className="aspect-auto max-h-[80vh]" />
             ) : (
                 <div className="flex flex-col h-full items-center justify-center gap-5">
                     <span className="text-4xl font-bold">Not Supported</span>

@@ -5,10 +5,11 @@ interface props {
     name: string,
     onClick: () => void,
     deleteSelectedFile: () => void
-    rename: () => void
+    rename: () => void,
+    changeFolder: () => void,
 }
 
-export default function Files({ name, onClick, rename, deleteSelectedFile }: props) {
+export default function Files({ name, onClick, rename, deleteSelectedFile, changeFolder }: props) {
     const newName = name.substring(0, 12) + (name.length > 12 ? "..." : "")
     return (
         <>
@@ -18,9 +19,10 @@ export default function Files({ name, onClick, rename, deleteSelectedFile }: pro
                         <FilesIcon width={75} height={75} />
                         <span className="break-words">{newName}</span>
                     </ContextMenuTrigger>
-                    <ContextMenuContent className="px-2 py-1 hover:cursor-pointer">
+                    <ContextMenuContent className="px-2 py-1 hover:cursor-pointer bg-white rounded-md border-gray-900">
                         <ContextMenuItem onClick={(e) => { e.stopPropagation(); rename() }}>Rename</ContextMenuItem>
                         <ContextMenuItem onClick={(e) => { e.stopPropagation(); deleteSelectedFile() }}>Delete</ContextMenuItem>
+                        <ContextMenuItem onClick={(e) => { e.stopPropagation(); changeFolder() }}>Change Folder</ContextMenuItem>
                     </ContextMenuContent>
                 </ContextMenu>
             </div>
