@@ -1,30 +1,57 @@
-# React + TypeScript + Vite
+# fileThings
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Online App to manage files.
 
-Currently, two official plugins are available:
+Link - https://file-things.vercel.app/
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+### How to run locally
 
-- Configure the top-level `parserOptions` property like this:
+Download the repo
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+```
+git clone https://github.com/Madraceee/fileThings.git
+cd fileThings
+npm i
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+### To run
+
+Make a .env.local file
+Store
+```
+VITE_SUPERBASE_URL=
+VITE_SUPERBASE_KEY=
+```
+
+Then run the cmds
+```
+npm run dev
+```
+
+Ensure to make 2 tables in Supabase before starting the app
+Change required RLS policies in supabase to allow users to access table
+```
+create table
+  public.folder_file (
+    "ID" uuid not null default gen_random_uuid (),
+    "Name" text not null,
+    "Parent" uuid not null,
+    "Type" character varying not null,
+    "Owner" text not null,
+    constraint folder_file_pkey primary key ("ID"),
+    constraint folder_file_Owner_fkey foreign key ("Owner") references users (email) on update cascade on delete cascade
+  ) tablespace pg_default;
+
+
+create table
+  public.users (
+    email text not null,
+    parent_folder_id uuid not null default gen_random_uuid (),
+    constraint users_pkey primary key (email),
+    constraint users_parent_folder_id_key unique (parent_folder_id)
+  ) tablespace pg_default;
+
+```
