@@ -60,7 +60,7 @@ export function Login() {
     }, []);
 
     return (
-        <div className="w-1/2 flex flex-col gap-3">
+        <div className="w-3/4 md:w-1/2 flex flex-col gap-3">
             <span className="text-2xl font-bold text-left">Login</span>
             <div className="w-full flex flex-col justify-center gap-5 rounded-md border-2 p-5">
                 <Input type="email" placeholder="Enter Email" value={email} onChange={(e) => setEmail(e.target.value)} />
@@ -76,6 +76,5 @@ export function Login() {
                 <Button variant={"link"} onClick={() => navigate("/")}>Home</Button>
             </div>
         </div>
-
     );
 }

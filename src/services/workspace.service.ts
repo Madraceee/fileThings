@@ -1,6 +1,7 @@
 import supabase from "@/configs/supabase.config";
 import { v4 as uuidv4 } from 'uuid';
 
+// Get all the folders and files of the specified user in the given parent folder
 const getFolderFilesService = async (parentFolderID: string, owner: string) => {
     const { data, error } = await supabase
         .from("folder_file")
@@ -16,6 +17,7 @@ const getFolderFilesService = async (parentFolderID: string, owner: string) => {
     return data;
 }
 
+// Get all the folders and their ids
 const getAllFoldersService = async (owner: string) => {
     const { data, error } = await supabase
         .from("folder_file")
@@ -31,6 +33,7 @@ const getAllFoldersService = async (owner: string) => {
     return data;
 }
 
+// Gets the File from storage given ID
 const getFileService = async (fileID: string, fileName: string) => {
     const extension = fileName.split(".").pop();
 
@@ -48,6 +51,7 @@ const getFileService = async (fileID: string, fileName: string) => {
 
 }
 
+// Add folder 
 const addFolderService = async (parentFolderID: string, folderName: string, owner: string) => {
     const { error } = await supabase
         .from("folder_file")
@@ -59,6 +63,7 @@ const addFolderService = async (parentFolderID: string, folderName: string, owne
     }
 }
 
+// Add File
 const addFileService = async (parentFolderID: string, file: File, owner: string) => {
     const id = uuidv4();
     const extension = file.name.split(".").pop();
@@ -82,6 +87,7 @@ const addFileService = async (parentFolderID: string, file: File, owner: string)
     }
 }
 
+// Delete Folder
 const deleteFolderService = async (folderID: string, owner: string) => {
     // Delete File Records and Folder Records
     const { error: error1 } = await supabase
@@ -108,6 +114,7 @@ const deleteFolderService = async (folderID: string, owner: string) => {
     }
 }
 
+// Delete File
 const deleteFileService = async (fileName: string, fileID: string, owner: string) => {
     // Delete File from storage
     const extension = fileName.split(".").pop();
@@ -134,6 +141,7 @@ const deleteFileService = async (fileName: string, fileID: string, owner: string
     }
 }
 
+// Rename File or Folder
 const renameFileOrFolderService = async (ID: string, newName: string, owner: string) => {
     const { error } = await supabase
         .from("folder_file")
@@ -147,6 +155,7 @@ const renameFileOrFolderService = async (ID: string, newName: string, owner: str
     }
 }
 
+// Move a file
 const MoveFileFolderService = async (ID: string, newParent: string, owner: string) => {
     const { error } = await supabase
         .from("folder_file")
@@ -160,6 +169,7 @@ const MoveFileFolderService = async (ID: string, newParent: string, owner: strin
     }
 }
 
+// Login service using email and password
 const LoginService = async (email: string, password: string) => {
     const { data: data1, error: error1 } = await supabase
         .auth
@@ -191,6 +201,7 @@ const LoginService = async (email: string, password: string) => {
     return { ...data1, folderID }
 }
 
+// Creating a new account using email and password
 const CreateAcc = async (email: string, password: string) => {
     const { data: data1, error: error1 } = await supabase
         .auth

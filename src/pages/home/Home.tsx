@@ -14,9 +14,9 @@ const Home = () => {
         }
     }, [])
     return (
-        <div className="flex flex-col w-full h-screen justify-center items-center">
+        <div className="flex flex-col w-full min-h-screen justify-center items-center">
             <div className="w-1/2 flex flex-col gap-2">
-                <span className="text-2xl md:text-8xl font-bold">fileThings</span>
+                <span className="text-4xl md:text-8xl font-bold">fileThings</span>
                 <span className="text-xl font-thin">The next best way to manage files</span>
                 <div className="w-full flex flex-row gap-1 ">
                     <Button className="w-full" onClick={() => navigate("/login")}>Login</Button>

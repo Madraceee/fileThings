@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+// folderStack and folderNameStack are used for path and moving backwards
 export type UserState = {
     email: string,
     token: string,

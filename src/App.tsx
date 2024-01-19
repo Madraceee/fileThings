@@ -16,7 +16,7 @@ import Home from './pages/home/Home';
 function App() {
   const isLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn)
   return (
-    <div className="w-full h-screen flex flex-col justify-center items-center px-2">
+    <div className="w-full min-h-screen flex flex-col justify-center items-center px-2">
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
