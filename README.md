@@ -3,8 +3,9 @@
 Online App to manage files.
 
 Youtube - https://www.youtube.com/watch?v=LzwzgVQajVg
-(Link maynot work since Supabase acc is inactive. Contact me to enable Supabase and you can test it out)
+
 Link - https://file-things.vercel.app/
+(Link maynot work since Supabase acc is inactive. Contact me to enable Supabase and you can test it out)
 
 
 ---
